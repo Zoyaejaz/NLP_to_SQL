@@ -1,0 +1,22 @@
+[
+  {"question": "How many customers are there?",
+   "gold": "SELECT count(*) FROM customers"},
+  {"question": "Average salary per department, with the department name",
+   "gold": "SELECT d.name, ROUND(AVG(e.salary)::numeric, 2) FROM employees e JOIN departments d ON d.department_id = e.department_id GROUP BY d.name"},
+  {"question": "Which department has the highest total salary spend?",
+   "gold": "SELECT d.name FROM employees e JOIN departments d ON d.department_id = e.department_id GROUP BY d.name ORDER BY SUM(e.salary) DESC LIMIT 1"},
+  {"question": "How many orders have each status?",
+   "gold": "SELECT status, count(*) FROM orders GROUP BY status"},
+  {"question": "Total revenue (quantity times unit price) from delivered orders",
+   "gold": "SELECT ROUND(SUM(oi.quantity * oi.unit_price)::numeric, 2) FROM order_items oi JOIN orders o ON o.order_id = oi.order_id WHERE o.status = 'delivered'"},
+  {"question": "Top 5 customers by total amount spent (name and total)",
+   "gold": "SELECT c.full_name, ROUND(SUM(oi.quantity * oi.unit_price)::numeric, 2) AS total FROM customers c JOIN orders o ON o.customer_id = c.customer_id JOIN order_items oi ON oi.order_id = o.order_id GROUP BY c.customer_id, c.full_name ORDER BY total DESC LIMIT 5"},
+  {"question": "Names of products that have never been ordered",
+   "gold": "SELECT p.name FROM products p LEFT JOIN order_items oi ON oi.product_id = p.product_id WHERE oi.order_item_id IS NULL"},
+  {"question": "Employees who earn more than their manager (names only)",
+   "gold": "SELECT e.full_name FROM employees e JOIN employees m ON m.employee_id = e.manager_id WHERE e.salary > m.salary"},
+  {"question": "Number of customers per country",
+   "gold": "SELECT country, count(*) FROM customers GROUP BY country"},
+  {"question": "Most expensive product in each category (category and product name)",
+   "gold": "SELECT DISTINCT ON (category) category, name FROM products ORDER BY category, unit_price DESC"}
+]
